@@ -1,0 +1,66 @@
+---
+- name: Deploy lab4-service
+  hosts: lab4
+  become: true
+
+  vars:
+    service_dir: /opt/lab4-service/html
+    student_name: "Иванов Иван"
+
+  tasks:
+
+    - name: Установить python3
+      apt:
+        name: python3
+        state: present
+        update_cache: true
+
+    - name: Создать каталог сервиса
+      file:
+        path: "{{ service_dir }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: "0755"
+
+    - name: Развернуть index.html с фамилией студента
+      copy:
+        content: "<h1>{{ student_name }}</h1>\n"
+        dest: "{{ service_dir }}/index.html"
+        owner: www-data
+        group: www-data
+        mode: "0644"
+
+    - name: Скопировать service.sh
+      copy:
+        src: service.sh
+        dest: /opt/lab4-service/service.sh
+        owner: www-data
+        group: www-data
+        mode: "0755"
+
+    - name: Создать systemd unit-файл
+      copy:
+        src: lab4-service.service
+        dest: /etc/systemd/system/lab4-service.service
+        mode: "0644"
+      notify: reload and restart service
+
+    - name: Запустить и включить сервис
+      systemd:
+        name: lab4-service
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Проверить доступность сервиса HTTP 200
+      uri:
+        url: http://127.0.0.1:8000/
+        status_code: 200
+
+  handlers:
+    - name: reload and restart service
+      systemd:
+        name: lab4-service
+        daemon_reload: true
+        state: restarted
