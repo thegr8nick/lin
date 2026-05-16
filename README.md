@@ -9,8 +9,3 @@ HTTP-сервис на python3 + systemd + Ansible.
 - lab4-healthcheck.sh — скрипт проверки доступности
 - site.yml — Ansible playbook
 - inventory.example.ini — пример инвентаря (без секретов)
-
-## Как запустить Ansible
-cp inventory.example.ini inventory.ini
-# отредактировать IP и имя пользователя
-ansible-playbook -i inventory.ini site.yml
