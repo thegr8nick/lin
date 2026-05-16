@@ -5,7 +5,7 @@
 
   vars:
     service_dir: /opt/lab4-service/html
-    student_name: "Иванов Иван"
+    student_name: "Кудашев Никита"
 
   tasks:
 
